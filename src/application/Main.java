@@ -17,21 +17,9 @@ public class Main extends Application {
 		Parent root1 = (Parent) FXMLLoader.load(Main.class.getResource("/application/Main.fxml"));
 		primaryStage.setTitle("Map Finder 2018 - Pro Edition");
 		primaryStage.setScene(new Scene(root1, 1000, 800));
-
-		/*
-		 * javafx.scene.control.MenuItem menuItem1 = new
-		 * javafx.scene.control.MenuItem("Option 1"); javafx.scene.control.MenuItem
-		 * menuItem2 = new javafx.scene.control.MenuItem("Option 2");
-		 * javafx.scene.control.MenuItem menuItem3 = new MenuItem("Option 3");
-		 */
-		/*
-		 * MenuButton menuButton = new MenuButton("Options", null, menuItem1, menuItem2,
-		 * menuItem3);
-		 */
-
-		// HBox hbox = new HBox(menuButton);
-
+		GraphNodeAL2 rh = new GraphNodeAL2();
 		primaryStage.show();
+		rh.loadMap();
 	}
 
 

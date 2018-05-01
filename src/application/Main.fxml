@@ -1,39 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.Accordion?>
-<?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.Pane?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <MenuBar layoutY="2.0" prefHeight="26.0" prefWidth="600.0">
-        <menus>
-          <Menu mnemonicParsing="false" text="File">
+<Pane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.GraphNodeAL2">
+    <children>
+        <ComboBox fx:id="myCombobox" layoutY="35.0" prefHeight="25.0" prefWidth="186.0" promptText="Choose Start Destination">
             <items>
-              <MenuItem mnemonicParsing="false" text="Close" />
+
             </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Edit">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Help">
-            <items>
-              <MenuItem mnemonicParsing="false" text="About" />
-            </items>
-          </Menu>
-        </menus>
-         <opaqueInsets>
-            <Insets />
-         </opaqueInsets>
-      </MenuBar>
-   </children>
+        </ComboBox>
+        <ComboBox layoutX="207.0" layoutY="35.0" prefHeight="25.0" prefWidth="186.0" promptText="Choose Destination" />
+        <TabPane layoutX="-5.0" layoutY="80.0" prefHeight="723.0" prefWidth="1008.0" tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+                <Tab text="All routes" />
+                <Tab text="Shortest route" />
+                <Tab text="Quickest route" />
+                <Tab text="Set a waypoint" />
+                <Tab text="Avoid a location" />
+            </tabs>
+        </TabPane>
+        <MenuBar layoutY="2.0" prefHeight="25.0" prefWidth="1000.0">
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Load in CSV file" onAction="#setData" />
+                        <MenuItem mnemonicParsing="false" onAction="#exitMenu" text="Exit" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Add a location" />
+                        <MenuItem mnemonicParsing="false" text="Connect two locations" />
+                        <MenuItem mnemonicParsing="false" text="Remove a location" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </children>
 </Pane>
