@@ -120,6 +120,7 @@ public class GraphNodeAL2<T> {
                         if (foundPrevPathNode)
                             break; // We've identified the previous path node, so break the inner loop to continue
                     }
+
                 }
                 // Reset the node values for all nodes to (effectively) infinity so we can
                 // search again (leave no footprint!)
@@ -200,11 +201,13 @@ public class GraphNodeAL2<T> {
         for (int i = 0; i < 4; i++) {
             System.out.println("ENTER NAME");
             Scanner scanner = new Scanner(System.in);
-            String name = (scanner.nextLine());
+            String name1 = (scanner.nextLine());
             //System.out.println(name);
-            list.add(new GraphNodeAL2(name));
+            list.add(new GraphNodeAL2(list));
             //System.out.println(list + name);
             //listOfLocations.add(new GraphNodeAL2<String>(name));
+            System.out.println(new GraphNodeAL2(name));
+            System.out.println(data);
         }
         addLocationLink();
     }
@@ -212,14 +215,14 @@ public class GraphNodeAL2<T> {
     public void test8() {
         locationStartCb.getButtonCell();
         System.out.println(locationStartCb.getValue());
-        String convertedToString = String.valueOf(locationStartCb.getVisibleRowCount());  //method 1
+        System.out.println(locationDestCb.getValue());
+        //String convertedToString = String.valueOf(locationStartCb.getVisibleRowCount());
     }
 
     public void addLocationLink() {
 
         try {
             for (int i = 0; i < 1; i++) {
-
                 System.out.println("Enter First Location Link(int)");
                 int firstLocation = (scanner.nextInt());
                 System.out.println("Enter Second Location Link(int)");
@@ -246,7 +249,7 @@ public class GraphNodeAL2<T> {
             System.out.println("The shortest path from New Ross to Kilmuckridge");
             System.out.println("using Dijkstra's algorithm:");
             System.out.println("-------------------------------------");
-            DistancedPath cpa = findShortestPathDijkstra(list.get(sourceLocation), dest);
+            DistancedPath cpa = findShortestPathDijkstra(list.get(sourceLocation), locationDestCb.getValue());
             for (GraphNodeAL2<?> n : cpa.pathList)
                 System.out.println(n.data);
             System.out.println("\nThe total path distance is: " + cpa.pathDistance + "km");
@@ -258,15 +261,13 @@ public class GraphNodeAL2<T> {
     int test = 0;
 
     public void loadMap() {
+        locationStartCb.getItems().clear();
+        locationDestCb.getItems().clear();
         input = new Scanner(System.in);
-        //create file from student file
         File mapfile = new File(mapdata);
-        //try catch incase file doesnt exist
-        System.out.println("");
-        System.out.println("");
+        System.out.println("\n");
         System.out.println("CSV MAP DATA");
         System.out.println("--------------------------------");
-        int index = 0;
         try {
             //use scanner to read file
             mapread = new Scanner(mapfile);
@@ -284,17 +285,14 @@ public class GraphNodeAL2<T> {
                 list.add(new GraphNodeAL2(name, road, distance));
                 System.out.println(name + " " + road + " " + distance);
 
-
-                locationStartCb.getItems().add(index+": "+name);
+                locationStartCb.getItems().add(name);
                 locationDestCb.getItems().add(name);
-                index++;
             }
 
             String test = "hey";
             //locationStartCb.getItems().clear();
             System.out.println();
             System.out.println("Map data loaded...");
-            //close the read
             mapread.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();

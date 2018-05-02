@@ -45,7 +45,7 @@
                     <items>
                         <MenuItem mnemonicParsing="false" text="Add a location" onAction="#addMapLocation"/>
                         <MenuItem mnemonicParsing="false" text="Connect two locations" onAction="#addLocationLink"/>
-                        <MenuItem mnemonicParsing="false" text="Remove a location" />
+                        <MenuItem mnemonicParsing="false" text="Remove a location"  />
                     </items>
                 </Menu>
             </menus>
