@@ -17,9 +17,9 @@ import java.io.FileNotFoundException;
 public class GraphNodeAL2<T> {
     public T data;
     @FXML
-    private FlowPane container ;
+    private FlowPane container;
 
-    private List<ComboBox> comboBoxes ;
+    private List<ComboBox> comboBoxes;
     public List<GraphLinkAL> adjList = new ArrayList<>(); // Adjacency list now contains link objects = key!
     // Could use any concrete List implementation
     public int nodeValue = Integer.MAX_VALUE;
@@ -34,8 +34,12 @@ public class GraphNodeAL2<T> {
     @FXML
     Slider slider;
     @FXML
-    private ComboBox myCombobox;
+    ComboBox locationStartCb;
+    @FXML
+    ComboBox locationDestCb;
+    @FXML
     private List<ComboBox> combobox;
+    Scanner scanner = new Scanner(System.in);
 
     public GraphNodeAL2() {
 
@@ -75,6 +79,7 @@ public class GraphNodeAL2<T> {
                 traverseGraphDepthFirstShowingTotalDistance(adjLink.destNode, encountered,
                         totalDistance + adjLink.distance);
     }
+    //
 
     public static <T> DistancedPath findShortestPathDijkstra(GraphNodeAL2<?> startNode, T lookingfor) {
         DistancedPath cp = new DistancedPath(); // Create result object for shortest path
@@ -145,14 +150,12 @@ public class GraphNodeAL2<T> {
         return null; // No path found, so return null
     }
 
-    public void setData(){
+    public void start(){
+        loadMap();
+    }
 
-        labels = new ArrayList<>();
-        for (int i = 1; i <= 10; i++) {
-            ComboBox comboBox = new ComboBox("hi");
-            comboboxs.add(combobox);
-            container.getChildren().add(comboBox);
-        //myCombobox.getItems().add(list.get(0));
+    public void setData() {
+
 
     }
 
@@ -187,9 +190,8 @@ public class GraphNodeAL2<T> {
         //rh.addMapLocation();
         //rh.addLocationLink();
         rh.setData();
-        System.out.println();
+        System.out.println("@@@@@@@@@@");
         rh.loadMap();
-
 
 
     }
@@ -197,53 +199,54 @@ public class GraphNodeAL2<T> {
     public void addMapLocation() {
         for (int i = 0; i < 4; i++) {
             System.out.println("ENTER NAME");
-            Scanner addName = new Scanner(System.in);
-            String name = (addName.nextLine());
-
-            System.out.println(name);
+            Scanner scanner = new Scanner(System.in);
+            String name = (scanner.nextLine());
+            //System.out.println(name);
             list.add(new GraphNodeAL2(name));
-            System.out.println(list + name);
-
-
+            //System.out.println(list + name);
             //listOfLocations.add(new GraphNodeAL2<String>(name));
-
-/*			GraphNodeAL2<String> a1 = new GraphNodeAL2<>("New Ross");
-			GraphNodeAL2<String> index = new GraphNodeAL2<>("New Ross");*/
         }
+        addLocationLink();
+    }
+
+    public void test8() {
+        locationStartCb.getButtonCell();
+        System.out.println(locationStartCb.getValue());
+        String convertedToString = String.valueOf(locationStartCb.getVisibleRowCount());  //method 1
     }
 
     public void addLocationLink() {
 
         try {
             for (int i = 0; i < 1; i++) {
-                System.out.println("Enter First Location Link");
-                Scanner addFirstLocation = new Scanner(System.in);
-                int firstLocation = (addFirstLocation.nextInt());
 
-                System.out.println("Enter Second Location Link");
-                Scanner addSecondLocation = new Scanner(System.in);
-                int secondLocation = (addSecondLocation.nextInt());
-
+                System.out.println("Enter First Location Link(int)");
+                int firstLocation = (scanner.nextInt());
+                System.out.println("Enter Second Location Link(int)");
+                int secondLocation = (scanner.nextInt());
                 System.out.println("Enter the road name between the two locations");
-                Scanner addRoad = new Scanner(System.in);
-                String road = (addRoad.nextLine());
-
+                String road = (scanner.nextLine());
+                String eadfasd = (scanner.nextLine());
                 System.out.println("Enter the distance between the two links");
-                Scanner addDistance = new Scanner(System.in);
-                int distance = (addDistance.nextInt());
+                int distance = (scanner.nextInt());
 
                 list.get(firstLocation).connectToNodeUndirected(list.get(secondLocation), road, distance);
-
-
             }
         } catch (Exception e) {
             System.out.println("Error: Make sure to enter whole numbers only and that the location index exists");
         }
         try {
+            System.out.println("Dijkstra's algorithm:");
+            System.out.println("-------------------------------------");
+            System.out.println("Enter the source Location Link(INT INDEX)");
+            int sourceLocation = (scanner.nextInt());
+            System.out.println("Enter the destination(STRING)");
+            String dest = (scanner.nextLine());
+
             System.out.println("The shortest path from New Ross to Kilmuckridge");
             System.out.println("using Dijkstra's algorithm:");
             System.out.println("-------------------------------------");
-            DistancedPath cpa = findShortestPathDijkstra(list.get(0), "Cork");
+            DistancedPath cpa = findShortestPathDijkstra(list.get(sourceLocation), dest);
             for (GraphNodeAL2<?> n : cpa.pathList)
                 System.out.println(n.data);
             System.out.println("\nThe total path distance is: " + cpa.pathDistance + "km");
@@ -263,6 +266,7 @@ public class GraphNodeAL2<T> {
         System.out.println("");
         System.out.println("CSV MAP DATA");
         System.out.println("--------------------------------");
+        int index = 0;
         try {
             //use scanner to read file
             mapread = new Scanner(mapfile);
@@ -279,7 +283,15 @@ public class GraphNodeAL2<T> {
 
                 list.add(new GraphNodeAL2(name, road, distance));
                 System.out.println(name + " " + road + " " + distance);
+
+
+                locationStartCb.getItems().add(index+": "+name);
+                locationDestCb.getItems().add(name);
+                index++;
             }
+
+            String test = "hey";
+            //locationStartCb.getItems().clear();
             System.out.println();
             System.out.println("Map data loaded...");
             //close the read

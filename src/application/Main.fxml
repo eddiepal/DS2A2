@@ -12,15 +12,21 @@
 
 <Pane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.GraphNodeAL2">
     <children>
-        <ComboBox fx:id="myCombobox" layoutY="35.0" prefHeight="25.0" prefWidth="186.0" promptText="Choose Start Destination">
+        <ComboBox fx:id="locationStartCb" layoutY="35.0" prefHeight="25.0" prefWidth="186.0" promptText="Choose Start Destination">
             <items>
-
+                <FXCollections fx:factory="observableArrayList">
+                </FXCollections>
             </items>
         </ComboBox>
-        <ComboBox layoutX="207.0" layoutY="35.0" prefHeight="25.0" prefWidth="186.0" promptText="Choose Destination" />
+        <ComboBox fx:id="locationDestCb" layoutX="207.0" layoutY="35.0" prefHeight="25.0" prefWidth="186.0" promptText="Choose Destination" >
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                </FXCollections>
+            </items>
+        </ComboBox>
         <TabPane layoutX="-5.0" layoutY="80.0" prefHeight="723.0" prefWidth="1008.0" tabClosingPolicy="UNAVAILABLE">
             <tabs>
-                <Tab text="All routes" />
+                <Tab text="All routes" onSelectionChanged="#test8"/>
                 <Tab text="Shortest route" />
                 <Tab text="Quickest route" />
                 <Tab text="Set a waypoint" />
@@ -31,14 +37,14 @@
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Load in CSV file" onAction="#setData" />
-                        <MenuItem mnemonicParsing="false" onAction="#exitMenu" text="Exit" />
+                        <MenuItem mnemonicParsing="false" text="Load in CSV file" onAction="#loadMap" />
+                        <MenuItem mnemonicParsing="false" onAction="#test8" text="Exit" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Edit">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Add a location" />
-                        <MenuItem mnemonicParsing="false" text="Connect two locations" />
+                        <MenuItem mnemonicParsing="false" text="Add a location" onAction="#addMapLocation"/>
+                        <MenuItem mnemonicParsing="false" text="Connect two locations" onAction="#addLocationLink"/>
                         <MenuItem mnemonicParsing="false" text="Remove a location" />
                     </items>
                 </Menu>

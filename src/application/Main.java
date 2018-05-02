@@ -4,8 +4,6 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -19,8 +17,6 @@ public class Main extends Application {
 		primaryStage.setScene(new Scene(root1, 1000, 800));
 		GraphNodeAL2 rh = new GraphNodeAL2();
 		primaryStage.show();
-		rh.loadMap();
+
 	}
-
-
 }
