@@ -16,7 +16,7 @@ public class GraphNodeAL2<T> {
     public T data;
     @FXML
     private FlowPane container;
-
+    public List<GraphLinkAL> locationStartList = new ArrayList<>();
     private List<ComboBox> comboBoxes;
     public List<GraphLinkAL> adjList = new ArrayList<>(); // Adjacency list now contains link objects = key!
     // Could use any concrete List implementation
@@ -30,7 +30,9 @@ public class GraphNodeAL2<T> {
     private String name = "";
     private ArrayList<GraphNodeAL2<String>> listOfLocations;
     @FXML
-    private List<GraphNodeAL2> list = new ArrayList<GraphNodeAL2>();
+    private List<GraphNodeAL2> nodeList = new ArrayList<GraphNodeAL2>();
+    @FXML
+    private List<GraphNodeAL2> linkList = new ArrayList<GraphNodeAL2>();
     @FXML
     Slider slider;
     @FXML
@@ -44,6 +46,7 @@ public class GraphNodeAL2<T> {
     public GraphNodeAL2() {
 
     }
+
 
     public GraphNodeAL2(int i, String name) {
 
@@ -151,7 +154,7 @@ public class GraphNodeAL2<T> {
         return null; // No path found, so return null
     }
 
-    public void start(){
+    public void start() {
         try {
             loadMap();
         } catch (IOException e) {
@@ -167,7 +170,7 @@ public class GraphNodeAL2<T> {
 
 
     public static void main(String[] args) {
-       /* GraphNodeAL2<String> a1 = new GraphNodeAL2<>("Wexford");
+        GraphNodeAL2<String> a1 = new GraphNodeAL2<>("Wexford");
         GraphNodeAL2<String> a2 = new GraphNodeAL2<>("Wicklow");
         GraphNodeAL2<String> a3 = new GraphNodeAL2<>("Carlow");
         GraphNodeAL2<String> a4 = new GraphNodeAL2<>("Kilkenny");
@@ -180,9 +183,9 @@ public class GraphNodeAL2<T> {
         a2.connectToNodeUndirected(a5, "fssd", 1000);
         a2.connectToNodeUndirected(a3, "sfsg", 10);
         a2.connectToNodeUndirected(a6, "sfsd", 10);
-        traverseGraphDepthFirstShowingTotalDistance(a2, null, 0);
+        // traverseGraphDepthFirstShowingTotalDistance(a2, null, 0);
 
-        System.out.println("The shortest path from Q to Y is:");
+        /*System.out.println("The shortest path from Q to Y is:");
         System.out.println("");
         System.out.println("The shortest path from New Ross to Kilmuckridge");
         System.out.println("using Dijkstra's algorithm:");
@@ -208,7 +211,7 @@ public class GraphNodeAL2<T> {
             Scanner scanner = new Scanner(System.in);
             String name1 = (scanner.nextLine());
             //System.out.println(name);
-            list.add(new GraphNodeAL2(list));
+            nodeList.add(new GraphNodeAL2(nodeList));
             //System.out.println(list + name);
             //listOfLocations.add(new GraphNodeAL2<String>(name));
             System.out.println(new GraphNodeAL2(name));
@@ -218,19 +221,19 @@ public class GraphNodeAL2<T> {
 
     }
 
-/*    public void shortestRoute(){
+    public void shortestRoute() {
         try {
             System.out.println("The shortest path from New Ross to Kilmuckridge");
             System.out.println("using Dijkstra's algorithm:");
             System.out.println("-------------------------------------");
-            DistancedPath cpa = findShortestPathDijkstra(list.get(sourceLocation), locationDestCb.getValue());
+            DistancedPath cpa = findShortestPathDijkstra(nodeList.get(locationStartCb.getSelectionModel().getSelectedIndex()), locationDestCb.getValue());
             for (GraphNodeAL2<?> n : cpa.pathList)
                 System.out.println(n.data);
             System.out.println("\nThe total path distance is: " + cpa.pathDistance + "km");
         } catch (Exception e) {
             System.out.println("Error: Please make sure only whole numbers were entered and that the location index exits.");
         }
-    }*/
+    }
 
     public void test8() {
         locationStartCb.getButtonCell();
@@ -240,6 +243,7 @@ public class GraphNodeAL2<T> {
     }
 
     public void addLocationLink() {
+
 
         try {
             for (int i = 0; i < 1; i++) {
@@ -253,7 +257,7 @@ public class GraphNodeAL2<T> {
                 System.out.println("Enter the distance between the two links");
                 int distance = (scanner.nextInt());
 
-                list.get(firstLocation).connectToNodeUndirected(list.get(secondLocation), road, distance);
+                nodeList.get(firstLocation).connectToNodeUndirected(nodeList.get(secondLocation), road, distance);
             }
         } catch (Exception e) {
             System.out.println("Error: Make sure to enter whole numbers only and that the location index exists");
@@ -269,7 +273,7 @@ public class GraphNodeAL2<T> {
             System.out.println("The shortest path from New Ross to Kilmuckridge");
             System.out.println("using Dijkstra's algorithm:");
             System.out.println("-------------------------------------");
-            DistancedPath cpa = findShortestPathDijkstra(list.get(sourceLocation), locationDestCb.getValue());
+            DistancedPath cpa = findShortestPathDijkstra(nodeList.get(sourceLocation), locationDestCb.getValue());
             for (GraphNodeAL2<?> n : cpa.pathList)
                 System.out.println(n.data);
             System.out.println("\nThe total path distance is: " + cpa.pathDistance + "km");
@@ -280,7 +284,7 @@ public class GraphNodeAL2<T> {
 
     int test = 0;
 
-    public void loadMap() throws IOException{
+    public void loadMap() throws IOException {
 
         File mapfile = new File(mapdata);
         System.out.println("\n");
@@ -300,13 +304,12 @@ public class GraphNodeAL2<T> {
             String[] parts = data.split(",");
             //set name to the string at the 0 column
 
-            for (int i = 0; i < parts.length; i++)
-            {
+            for (int i = 0; i < parts.length; i++) {
                 GraphNodeAL2<String> test = new GraphNodeAL2<>(parts[i]);
 
                 // test.ID = id;
                 //id++;
-                list.add(test);
+                nodeList.add(test);
             }
             //list.add(new GraphNodeAL2(name, road, distance));
         }
@@ -320,18 +323,18 @@ public class GraphNodeAL2<T> {
             String[] parts = data.split(",");
             //set name to the string at the 0 column
 
-            for (int i = 0; i < parts.length; i++)
-            {
+            for (int i = 0; i < parts.length; i++) {
                 int firstLocation = Integer.parseInt(parts[0]);
                 int secondLocation = Integer.parseInt(parts[1]);
                 String road = parts[2];
                 int distance = Integer.parseInt(parts[3]);
-
-                list.get(firstLocation).connectToNodeUndirected(list.get(secondLocation), road, distance);
+                System.out.println(firstLocation);
+ /*               GraphNodeAL2<String> test = new GraphNodeAL2<>(parts[i]);
+                nodeLis.add(test);*/
+                nodeList.get(firstLocation).connectToNodeUndirected(nodeList.get(secondLocation), road, distance);
             }
             //list.add(new GraphNodeAL2(name, road, distance));
         }
-
 
 
         // String test = "hey";
@@ -340,8 +343,10 @@ public class GraphNodeAL2<T> {
         System.out.println("Map data loaded...");
         mapread.close();
 
-        for(int i =0; i< list.size();i++ ) {
-            System.out.println(list.get(i).data);
+        for (int i = 0; i < nodeList.size(); i++) {
+            System.out.println(nodeList.get(i).data);
+            locationStartCb.getItems().add(nodeList.get(i).data);
+            locationDestCb.getItems().add(nodeList.get(i).data);
         }
 
 

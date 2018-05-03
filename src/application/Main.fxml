@@ -51,6 +51,7 @@
         </MenuBar>
         <Button layoutX="406.0" layoutY="35.0" mnemonicParsing="false" onAction="#addMapLocation" text="Add Node" />
         <Button layoutX="487.0" layoutY="35.0" mnemonicParsing="false" onAction="#addLocationLink" text="Add Node link" />
+        <Button layoutX="487.0" layoutY="35.0" mnemonicParsing="false" onAction="#shortestRoute" text="ShortestRoute" />
      <!--   <Button layoutX="592.0" layoutY="35.0" mnemonicParsing="false" onAction="#shortestRoute" text="Find shortest route" />-->
       <TextArea layoutX="327.0" layoutY="424.0" prefHeight="45.0" prefWidth="253.0" />
     </children>
