@@ -6,7 +6,7 @@ public class GraphLinkAL {
 
 	public GraphLinkAL(GraphNodeAL2<?> destNode, String road, int distance) {
 		this.destNode = destNode;
-		this.road = road;
+		this.road = this.road;
 		this.distance = distance;
 	}
 }

@@ -1,18 +1,16 @@
 package application;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.FlowPane;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
-
-import java.io.File;
-import java.io.FileNotFoundException;
 
 public class GraphNodeAL2<T> {
     public T data;
@@ -26,6 +24,8 @@ public class GraphNodeAL2<T> {
     private Scanner input;
     private String mapdata = "src/application/mapdata.csv";
     private Scanner mapread;
+    private String linkdata = "src/application/links.csv";
+    private Scanner linkread;
     private int id;
     private String name = "";
     private ArrayList<GraphNodeAL2<String>> listOfLocations;
@@ -72,7 +72,7 @@ public class GraphNodeAL2<T> {
         if (encountered == null)
             encountered = new ArrayList<>(); // First node so create new (empty) encountered list
         encountered.add(from);
-        // Could sort adjacency list here based on distance ï¿½ see next slide for more
+        // Could sort adjacency list here based on distance Ã¯Â¿Â½ see next slide for more
         // info!
         for (GraphLinkAL adjLink : from.adjList)
             if (!encountered.contains(adjLink.destNode))
@@ -152,7 +152,12 @@ public class GraphNodeAL2<T> {
     }
 
     public void start(){
-        loadMap();
+        try {
+            loadMap();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     public void setData() {
@@ -162,7 +167,7 @@ public class GraphNodeAL2<T> {
 
 
     public static void main(String[] args) {
-        GraphNodeAL2<String> a1 = new GraphNodeAL2<>("Wexford");
+       /* GraphNodeAL2<String> a1 = new GraphNodeAL2<>("Wexford");
         GraphNodeAL2<String> a2 = new GraphNodeAL2<>("Wicklow");
         GraphNodeAL2<String> a3 = new GraphNodeAL2<>("Carlow");
         GraphNodeAL2<String> a4 = new GraphNodeAL2<>("Kilkenny");
@@ -192,7 +197,7 @@ public class GraphNodeAL2<T> {
         //rh.addLocationLink();
         rh.setData();
         System.out.println("@@@@@@@@@@");
-        rh.loadMap();
+        rh.loadMap();*/
 
 
     }
@@ -210,7 +215,22 @@ public class GraphNodeAL2<T> {
             System.out.println(data);
         }
         addLocationLink();
+
     }
+
+/*    public void shortestRoute(){
+        try {
+            System.out.println("The shortest path from New Ross to Kilmuckridge");
+            System.out.println("using Dijkstra's algorithm:");
+            System.out.println("-------------------------------------");
+            DistancedPath cpa = findShortestPathDijkstra(list.get(sourceLocation), locationDestCb.getValue());
+            for (GraphNodeAL2<?> n : cpa.pathList)
+                System.out.println(n.data);
+            System.out.println("\nThe total path distance is: " + cpa.pathDistance + "km");
+        } catch (Exception e) {
+            System.out.println("Error: Please make sure only whole numbers were entered and that the location index exits.");
+        }
+    }*/
 
     public void test8() {
         locationStartCb.getButtonCell();
@@ -229,7 +249,7 @@ public class GraphNodeAL2<T> {
                 int secondLocation = (scanner.nextInt());
                 System.out.println("Enter the road name between the two locations");
                 String road = (scanner.nextLine());
-                String eadfasd = (scanner.nextLine());
+                scanner.nextLine();
                 System.out.println("Enter the distance between the two links");
                 int distance = (scanner.nextInt());
 
@@ -260,48 +280,107 @@ public class GraphNodeAL2<T> {
 
     int test = 0;
 
-    public void loadMap() {
-        locationStartCb.getItems().clear();
-        locationDestCb.getItems().clear();
-        input = new Scanner(System.in);
+    public void loadMap() throws IOException{
+
         File mapfile = new File(mapdata);
         System.out.println("\n");
         System.out.println("CSV MAP DATA");
         System.out.println("--------------------------------");
-        try {
-            //use scanner to read file
-            mapread = new Scanner(mapfile);
-            //while there is still next item in the file
-            while (mapread.hasNext()) {
-                //create a string called data that = value from file
-                String data = mapread.next();
-                //create string array of data separated at comma
-                String[] parts = data.split(",");
-                //set name to the string at the 0 column
-                name = parts[0];
-                String road = parts[1];
-                String distance = parts[2];
 
-                list.add(new GraphNodeAL2(name, road, distance));
-                System.out.println(name + " " + road + " " + distance);
+        //use scanner to read file
+        mapread = new Scanner(mapfile);
+        //while there is still next item in the file
+        String line;
 
-                locationStartCb.getItems().add(name);
-                locationDestCb.getItems().add(name);
+        //create a string called data that = value from file
+
+        while (mapread.hasNext()) {
+            String data = mapread.next();
+            //create string array of data separated at comma
+            String[] parts = data.split(",");
+            //set name to the string at the 0 column
+
+            for (int i = 0; i < parts.length; i++)
+            {
+                GraphNodeAL2<String> test = new GraphNodeAL2<>(parts[i]);
+
+                // test.ID = id;
+                //id++;
+                list.add(test);
             }
-
-            String test = "hey";
-            //locationStartCb.getItems().clear();
-            System.out.println();
-            System.out.println("Map data loaded...");
-            mapread.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            //list.add(new GraphNodeAL2(name, road, distance));
         }
+
+        File linkfile = new File(linkdata);
+        linkread = new Scanner(linkfile);
+
+        while (linkread.hasNext()) {
+            String data = linkread.next();
+            //create string array of data separated at comma
+            String[] parts = data.split(",");
+            //set name to the string at the 0 column
+
+            for (int i = 0; i < parts.length; i++)
+            {
+                int firstLocation = Integer.parseInt(parts[0]);
+                int secondLocation = Integer.parseInt(parts[1]);
+                String road = parts[2];
+                int distance = Integer.parseInt(parts[3]);
+
+                list.get(firstLocation).connectToNodeUndirected(list.get(secondLocation), road, distance);
+            }
+            //list.add(new GraphNodeAL2(name, road, distance));
+        }
+
+
+
+        // String test = "hey";
+        //locationStartCb.getItems().clear();
+        System.out.println();
+        System.out.println("Map data loaded...");
+        mapread.close();
+
+        for(int i =0; i< list.size();i++ ) {
+            System.out.println(list.get(i).data);
+        }
+
+
         //setData();
+    }
+  
+    /* public void readIn() throws IOException {
+
+        BufferedReader br = null;
+
+        br = new BufferedReader(new FileReader(new File("src/application/.csv")));
+        String line;
+        while ((line = br.readLine()) != null) {
+            String[] entries = line.split(",");
+            for (int i = 0; i < entries.length; i++) {
+                GraphNodeAL<String> test = new GraphNodeAL<>(entries[i]);
+                test.ID = id;
+                id++;
+                list.add(test);
+
+            }
+        }
+        
+
+        br = new BufferedReader(new FileReader(new File("src/files/links.csv")));
+
+        while ((line = br.readLine()) != null) {
+
+            String[] entries = line.split(",");
+            int src = parseInt(entries[0]);
+            int dest = parseInt(entries[1]);
+            int dist = parseInt(entries[2]);
+            list.get(src).connectToNodeUndirected(list.get(dest), dist);
+        }
+
     }
 
     public void exitMenu(ActionEvent event) {
         System.exit(0);
-    }
+    }*/
 
 }

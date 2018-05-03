@@ -17,6 +17,5 @@ public class Main extends Application {
 		primaryStage.setScene(new Scene(root1, 1000, 800));
 		GraphNodeAL2 rh = new GraphNodeAL2();
 		primaryStage.show();
-
 	}
 }
