@@ -1,0 +1,156 @@
+    public void addLocationLink() {
+
+
+        try {
+            for (int i = 0; i < 1; i++) {
+                System.out.println("Enter First Location Link(int)");
+                int firstLocation = (scanner.nextInt());
+                System.out.println("Enter Second Location Link(int)");
+                int secondLocation = (scanner.nextInt());
+                System.out.println("Enter the road name between the two locations");
+                String road = (scanner.nextLine());
+                scanner.nextLine();
+                System.out.println("Enter the distance between the two links");
+                int distance = (scanner.nextInt());
+
+                nodeList.get(firstLocation).connectToNodeUndirected(nodeList.get(secondLocation), road, distance);
+            }
+        } catch (Exception e) {
+            System.out.println("Error: Make sure to enter whole numbers only and that the location index exists");
+        }
+        try {
+            System.out.println("Dijkstra's algorithm:");
+            System.out.println("-------------------------------------");
+            System.out.println("Enter the source Location Link(INT INDEX)");
+            int sourceLocation = (scanner.nextInt());
+            System.out.println("Enter the destination(STRING)");
+            String dest = (scanner.nextLine());
+
+            System.out.println("The shortest path from New Ross to Kilmuckridge");
+            System.out.println("using Dijkstra's algorithm:");
+            System.out.println("-------------------------------------");
+            DistancedPath cpa = findShortestPathDijkstra(nodeList.get(sourceLocation), locationDestCb.getValue());
+            for (GraphNodeAL2<?> n : cpa.pathList)
+                System.out.println(n.data);
+            System.out.println("\nThe total path distance is: " + cpa.pathDistance + "km");
+        } catch (Exception e) {
+            System.out.println("Error: Please make sure only whole numbers were entered and that the location index exits.");
+        }
+    }
+
+    public void addMapLocation() {
+        for (int i = 0; i < 4; i++) {
+            System.out.println("ENTER NAME");
+            Scanner scanner = new Scanner(System.in);
+            String name1 = (scanner.nextLine());
+            //System.out.println(name);
+            nodeList.add(new GraphNodeAL2(nodeList));
+            //System.out.println(list + name);
+            //listOfLocations.add(new GraphNodeAL2<String>(name));
+            System.out.println(new GraphNodeAL2(name));
+            System.out.println(data);
+        }
+        addLocationLink();
+    }
+
+
+
+     public void loadMap() throws IOException {
+
+            String mapdata = "src/application/mapdata.csv";
+            File mapfile = new File(mapdata);
+            System.out.println("\n");
+            System.out.println("CSV MAP DATA");
+            System.out.println("--------------------------------");
+
+            //use scanner to read file
+            Scanner mapread = new Scanner(mapfile);
+            //while there is still next item in the file
+            String line;
+
+            //create a string called data that = value from file
+
+            while (mapread.hasNext()) {
+                String data = mapread.next();
+                //create string array of data separated at comma
+                String[] parts = data.split(",");
+                //set name to the string at the 0 column
+
+                for (int i = 0; i < parts.length; i++) {
+                    GraphNodeAL2<String> test = new GraphNodeAL2<>(parts[i]);
+
+                    // test.ID = id;
+                    //id++;
+                    nodeList.add(test);
+                }
+                //list.add(new GraphNodeAL2(name, road, distance));
+            }
+
+            String linkdata = "src/application/links.csv";
+            File linkfile = new File(linkdata);
+            Scanner linkread = new Scanner(linkfile);
+
+            while (linkread.hasNext()) {
+                String data = linkread.next();
+                //create string array of data separated at comma
+                String[] parts = data.split(",");
+                //set name to the string at the 0 column
+
+                for (int i = 0; i < parts.length; i++) {
+                    int firstLocation = Integer.parseInt(parts[0]);
+                    int secondLocation = Integer.parseInt(parts[1]);
+                    String road = parts[2];
+                    int distance = Integer.parseInt(parts[3]);
+                    System.out.println(firstLocation);
+     /*               GraphNodeAL2<String> test = new GraphNodeAL2<>(parts[i]);
+                    nodeLis.add(test);*/
+                    nodeList.get(firstLocation).connectToNodeUndirected(nodeList.get(secondLocation), road, distance);
+                }
+                //list.add(new GraphNodeAL2(name, road, distance));
+            }
+
+
+            // String test = "hey";
+            //locationStartCb.getItems().clear();
+            System.out.println();
+            System.out.println("Map data loaded...");
+            mapread.close();
+
+            for (int i = 0; i < nodeList.size(); i++) {
+                System.out.println(nodeList.get(i).data);
+                locationStartCb.getItems().add(nodeList.get(i).data);
+                locationDestCb.getItems().add(nodeList.get(i).data);
+            }
+
+
+            //setData();
+        }
+
+        /* public void readIn() throws IOException {
+
+            BufferedReader br = null;
+
+            br = new BufferedReader(new FileReader(new File("src/application/.csv")));
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] entries = line.split(",");
+                for (int i = 0; i < entries.length; i++) {
+                    GraphNodeAL<String> test = new GraphNodeAL<>(entries[i]);
+                    list.add(test);
+
+                }
+            }
+
+
+            br = new BufferedReader(new FileReader(new File("src/files/links.csv")));
+
+            while ((line = br.readLine()) != null) {
+
+                String[] entries = line.split(",");
+                int src = parseInt(entries[0]);
+                int dest = parseInt(entries[1]);
+                int dist = parseInt(entries[2]);
+                list.get(src).connectToNodeUndirected(list.get(dest), dist);
+            }
+
+        }*/

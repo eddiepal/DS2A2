@@ -37,22 +37,24 @@
                 <Menu mnemonicParsing="false" text="File">
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#loadMap" text="Load in CSV file" />
-                      <!--  <MenuItem mnemonicParsing="false" onAction="#testLocation" text="Exit" />-->
+                        <MenuItem mnemonicParsing="false" onAction="#exitMenu" text="Exit" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Edit">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#addMapLocation" text="Add a location" />
-                        <MenuItem mnemonicParsing="false" onAction="#addLocationLink" text="Connect two locations" />
+                        <!--                        <MenuItem mnemonicParsing="false" onAction="#addMapLocation" text="Add a location" />
+                                                <MenuItem mnemonicParsing="false" onAction="#addLocationLink" text="Connect two locations" />-->
                         <MenuItem mnemonicParsing="false" text="Remove a location" />
                     </items>
                 </Menu>
             </menus>
         </MenuBar>
-        <Button layoutX="406.0" layoutY="35.0" mnemonicParsing="false" onAction="#addMapLocation" text="Add Node" />
-        <Button layoutX="487.0" layoutY="35.0" mnemonicParsing="false" onAction="#addLocationLink" text="Add Node link" />
-        <Button layoutX="487.0" layoutY="35.0" mnemonicParsing="false" onAction="#shortestRoute" text="ShortestRoute" />
-     <!--   <Button layoutX="592.0" layoutY="35.0" mnemonicParsing="false" onAction="#shortestRoute" text="Find shortest route" />-->
-      <TextArea layoutX="327.0" layoutY="424.0" prefHeight="45.0" prefWidth="253.0" />
+        <!--        <Button layoutX="406.0" layoutY="35.0" mnemonicParsing="false" onAction="#addMapLocation" text="Add Node" />
+                <Button layoutX="487.0" layoutY="35.0" mnemonicParsing="false" onAction="#addLocationLink" text="Add Node link" />-->
+        <Button layoutX="405.0" layoutY="35.0" mnemonicParsing="false" onAction="#shortestRoute" text="Shortest Route" />
+        <!--   <Button layoutX="592.0" layoutY="35.0" mnemonicParsing="false" onAction="#shortestRoute" text="Find shortest route" />-->
+        <TextArea fx:id="detailsArea" editable="false" layoutY="81.0" prefHeight="736.0" prefWidth="1000.0" />
+        <Button layoutX="509.0" layoutY="35.0" mnemonicParsing="false" onAction="#allRoutes" text="All routes" />
+        <Button layoutX="585.0" layoutY="35.0" mnemonicParsing="false" text="Multiple Routes" onAction="#multibleRoutes" />
     </children>
 </Pane>

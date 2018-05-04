@@ -2,8 +2,7 @@ package application;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Slider;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.control.TextArea;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,49 +13,26 @@ import java.util.Scanner;
 
 public class GraphNodeAL2<T> {
     public T data;
-    @FXML
-    private FlowPane container;
-    public List<GraphLinkAL> locationStartList = new ArrayList<>();
-    private List<ComboBox> comboBoxes;
     public List<GraphLinkAL> adjList = new ArrayList<>(); // Adjacency list now contains link objects = key!
     // Could use any concrete List implementation
     public int nodeValue = Integer.MAX_VALUE;
     private Scanner input;
-    private String mapdata = "src/application/mapdata.csv";
-    private Scanner mapread;
-    private String linkdata = "src/application/links.csv";
-    private Scanner linkread;
-    private int id;
     private String name = "";
-    private ArrayList<GraphNodeAL2<String>> listOfLocations;
     @FXML
     private List<GraphNodeAL2> nodeList = new ArrayList<GraphNodeAL2>();
-    @FXML
-    private List<GraphNodeAL2> linkList = new ArrayList<GraphNodeAL2>();
-    @FXML
-    Slider slider;
     @FXML
     ComboBox locationStartCb;
     @FXML
     ComboBox locationDestCb;
-    @FXML
-    private List<ComboBox> combobox;
     Scanner scanner = new Scanner(System.in);
+    @FXML
+    TextArea detailsArea;
 
     public GraphNodeAL2() {
-
-    }
-
-
-    public GraphNodeAL2(int i, String name) {
-
     }
 
     public GraphNodeAL2(T data) {
         this.data = data;
-    }
-
-    public GraphNodeAL2(String name, String road2, String distance) {
     }
 
     public void connectToNodeDirected(GraphNodeAL2<T> destNode, String road, int distance) {
@@ -68,24 +44,11 @@ public class GraphNodeAL2<T> {
         destNode.adjList.add(new GraphLinkAL(this, road, distance)); // Add new link object to destination adjacency list
     }
 
-    // Regular recursive depth-first graph traversal with total distance
-    public static void traverseGraphDepthFirstShowingTotalDistance(GraphNodeAL2<?> from,
-                                                                   List<GraphNodeAL2<?>> encountered, int totalDistance) {
-        System.out.println(from.data + " (Total distance of reaching node: " + totalDistance + ")");
-        if (encountered == null)
-            encountered = new ArrayList<>(); // First node so create new (empty) encountered list
-        encountered.add(from);
-        // Could sort adjacency list here based on distance Ã¯Â¿Â½ see next slide for more
-        // info!
-        for (GraphLinkAL adjLink : from.adjList)
-            if (!encountered.contains(adjLink.destNode))
-                traverseGraphDepthFirstShowingTotalDistance(adjLink.destNode, encountered,
-                        totalDistance + adjLink.distance);
-    }
+
     //
 
-    public static <T> DistancedPath findShortestPathDijkstra(GraphNodeAL2<?> startNode, T lookingfor) {
-        DistancedPath cp = new DistancedPath(); // Create result object for shortest path
+    public static <T> DistancedRoute findShortestRouteDijkstra(GraphNodeAL2<?> startNode, T lookingfor) {
+        DistancedRoute cp = new DistancedRoute(); // Create result object for shortest route
         List<GraphNodeAL2<?>> encountered = new ArrayList<>(), unencountered = new ArrayList<>(); // Create
         // encountered/unencountered
         // lists
@@ -96,32 +59,26 @@ public class GraphNodeAL2<T> {
             currentNode = unencountered.remove(0); // Get the first unencountered node (sorted list, so will have lowest
             // value)
             encountered.add(currentNode); // Record current node in encountered list
-            if (currentNode.data.equals(lookingfor)) { // Found goal - assemble path list back to start and return it
-                cp.pathList.add(currentNode); // Add the current (goal) node to the result list (only element)
-                cp.pathDistance = currentNode.nodeValue; // The total shortest path distance is the node value of the
+            if (currentNode.data.equals(lookingfor)) { // Found goal - assemble route list back to start and return it
+                cp.routeList.add(currentNode); // Add the current (goal) node to the result list (only element)
+                cp.routeDistance = currentNode.nodeValue; // The total shortest route distance is the node value of the
                 // current/goal node
                 while (currentNode != startNode) { // While we're not back to the start node...
-                    boolean foundPrevPathNode = false; // Use a flag to identify when the previous path node is
+                    boolean foundPrevRouteNode = false; // Use a flag to identify when the previous route node is
                     // identified
                     for (GraphNodeAL2<?> n : encountered) { // For each node in the encountered list...
                         for (GraphLinkAL e : n.adjList) // For each edge from that node...
                             if (e.destNode == currentNode && currentNode.nodeValue - e.distance == n.nodeValue) { // If
-                                // that
-                                // edge
-                                // links
-                                // to
-                                // the
-                                // current node and the difference in node values is the distance of the edge ->
-                                // found path node!
-                                cp.pathList.add(0, n); // Add the identified path node to the front of the result list
-                                currentNode = n; // Move the currentNode reference back to the identified path node
-                                foundPrevPathNode = true; // Set the flag to break the outer loop
-                                break; // We've found the correct previous path node and moved the currentNode
+                                // that edge links to the current node and the difference in node values is the distance of the edge -> found route node!
+                                cp.routeList.add(0, n); // Add the identified route node to the front of the result list
+                                currentNode = n; // Move the currentNode reference back to the identified route node
+                                foundPrevRouteNode = true; // Set the flag to break the outer loop
+                                break; // We've found the correct previous route node and moved the currentNode
                                 // reference
                                 // back to it so break the inner loop
                             }
-                        if (foundPrevPathNode)
-                            break; // We've identified the previous path node, so break the inner loop to continue
+                        if (foundPrevRouteNode)
+                            break; // We've identified the previous route node, so break the inner loop to continue
                     }
 
                 }
@@ -131,27 +88,20 @@ public class GraphNodeAL2<T> {
                     n.nodeValue = Integer.MAX_VALUE;
                 for (GraphNodeAL2<?> n : unencountered)
                     n.nodeValue = Integer.MAX_VALUE;
-                return cp; // The distanceed (shortest) path has been assembled, so return it!
+                return cp; // The distanceed (shortest) route has been assembled, so return it!
             }
             // We're not at the goal node yet, so...
             for (GraphLinkAL e : currentNode.adjList) // For each edge/link from the current node...
                 if (!encountered.contains(e.destNode)) { // If the node it leads to has not yet been encountered (i.e.
                     // processed)
                     e.destNode.nodeValue = Integer.min(e.destNode.nodeValue, currentNode.nodeValue + e.distance); // Update
-                    // the
-                    // node
-                    // value
-                    // at
-                    // the
-                    // end
-                    // of the edge to the minimum of its current value or the total of the current
-                    // node's value plus the distance of the edge
+                    // the node value at the end of the edge to the minimum of its current value or the total of the current node's value plus the distance of the edge
                     unencountered.add(e.destNode);
                 }
             Collections.sort(unencountered, (n1, n2) -> n1.nodeValue - n2.nodeValue); // Sort in ascending node value
             // order
         } while (!unencountered.isEmpty());
-        return null; // No path found, so return null
+        return null; // No route found, so return null
     }
 
     public void start() {
@@ -163,136 +113,120 @@ public class GraphNodeAL2<T> {
         }
     }
 
-    public void setData() {
+    // Regular recursive depth-first graph traversal with total distance
+    public void traverseGraphDepthFirstShowingTotalDistance(GraphNodeAL2<?> from,
+                                                            List<GraphNodeAL2<?>> encountered, int totalDistance) {
+        detailsArea.appendText("\n" + from.data + ": " + totalDistance + "km");
+        if (encountered == null)
+            encountered = new ArrayList<>(); // First node so create new (empty) encountered list
+        encountered.add(from);
+        // Could sort adjacency list here based on distance Ã¯Â¿Â½ see next slide for more
+        // info!
+        Collections.sort(from.adjList, (a, b) -> a.distance - b.distance);
+        for (GraphLinkAL adjLink : from.adjList)
+            if (!encountered.contains(adjLink.destNode))
+                traverseGraphDepthFirstShowingTotalDistance(adjLink.destNode, encountered,
+                        totalDistance + adjLink.distance);
+    }
 
-
+    //Recursive depth-first search of graph (all paths identified returned)
+    public static <T> List<List<GraphNodeAL2<?>>> findAllPathsDepthFirst(GraphNodeAL2<?> from, List<GraphNodeAL2<?>> encountered, T lookingfor){
+        List<List<GraphNodeAL2<?>>> result=null, temp2;
+        if(from.data.equals(lookingfor)) { //Found it
+            List<GraphNodeAL2<?>> temp=new ArrayList<>(); //Create new single solution path list
+            temp.add(from); //Add current node to the new single path list
+            result=new ArrayList<>(); //Create new "list of lists" to store path permutations
+            result.add(temp); //Add the new single path list to the path permutations list
+            return result; //Return the path permutations list
+        }
+        if(encountered==null) encountered=new ArrayList<>(); //First node so create new (empty) encountered list
+        encountered.add(from); //Add current node to encountered list
+        for(GraphNodeAL2<?> adjNode : from.adjList){
+            if(!encountered.contains(adjNode)) {
+                temp2=findAllPathsDepthFirst(adjNode,new ArrayList<>(encountered),lookingfor); //Use clone of encountered list
+//for recursive call!
+                if(temp2!=null) { //Result of the recursive call contains one or more paths to the solution node
+                    for(List<GraphNodeAL2<?>> x : temp2) //For each partial path list returned
+                        x.add(0,from); //Add the current node to the front of each path list
+                    if(result==null) result=temp2; //If this is the first set of solution paths found use it as the result
+                    else result.addAll(temp2); //Otherwise append them to the previously found paths
+                }
+            }
+        }
+        return result;
     }
 
 
     public static void main(String[] args) {
         GraphNodeAL2<String> a1 = new GraphNodeAL2<>("Wexford");
-        GraphNodeAL2<String> a2 = new GraphNodeAL2<>("Wicklow");
-        GraphNodeAL2<String> a3 = new GraphNodeAL2<>("Carlow");
-        GraphNodeAL2<String> a4 = new GraphNodeAL2<>("Kilkenny");
-        GraphNodeAL2<String> a5 = new GraphNodeAL2<>("Dublin");
-        GraphNodeAL2<String> a6 = new GraphNodeAL2<>("Kildare");
-
-        a1.connectToNodeUndirected(a2, "esfsw", 53);
-        a1.connectToNodeUndirected(a3, "wwa", 3);
-        a1.connectToNodeUndirected(a4, "fser", 10);
-        a2.connectToNodeUndirected(a5, "fssd", 1000);
-        a2.connectToNodeUndirected(a3, "sfsg", 10);
-        a2.connectToNodeUndirected(a6, "sfsd", 10);
-        // traverseGraphDepthFirstShowingTotalDistance(a2, null, 0);
-
-        /*System.out.println("The shortest path from Q to Y is:");
-        System.out.println("");
-        System.out.println("The shortest path from New Ross to Kilmuckridge");
-        System.out.println("using Dijkstra's algorithm:");
-        System.out.println("-------------------------------------");
-        DistancedPath cpa = findShortestPathDijkstra(a1, "Kilkenny");
-        for (GraphNodeAL2<?> n : cpa.pathList)
-            System.out.println(n.data);
-        System.out.println("\nThe total path distance is: " + cpa.pathDistance + "km");
-
-        GraphNodeAL2 rh = new GraphNodeAL2();
-        //rh.addMapLocation();
-        //rh.addLocationLink();
-        rh.setData();
-        System.out.println("@@@@@@@@@@");
-        rh.loadMap();*/
-
-
+        a1.connectToNodeUndirected(a1, "esfsw", 53);
     }
 
-    public void addMapLocation() {
-        for (int i = 0; i < 4; i++) {
-            System.out.println("ENTER NAME");
-            Scanner scanner = new Scanner(System.in);
-            String name1 = (scanner.nextLine());
-            //System.out.println(name);
-            nodeList.add(new GraphNodeAL2(nodeList));
-            //System.out.println(list + name);
-            //listOfLocations.add(new GraphNodeAL2<String>(name));
-            System.out.println(new GraphNodeAL2(name));
-            System.out.println(data);
-        }
-        addLocationLink();
-
-    }
 
     public void shortestRoute() {
-        try {
-            System.out.println("The shortest path from New Ross to Kilmuckridge");
-            System.out.println("using Dijkstra's algorithm:");
-            System.out.println("-------------------------------------");
-            DistancedPath cpa = findShortestPathDijkstra(nodeList.get(locationStartCb.getSelectionModel().getSelectedIndex()), locationDestCb.getValue());
-            for (GraphNodeAL2<?> n : cpa.pathList)
-                System.out.println(n.data);
-            System.out.println("\nThe total path distance is: " + cpa.pathDistance + "km");
-        } catch (Exception e) {
-            System.out.println("Error: Please make sure only whole numbers were entered and that the location index exits.");
-        }
-    }
 
-    public void test8() {
-        locationStartCb.getButtonCell();
-        System.out.println(locationStartCb.getValue());
+            detailsArea.clear();
+            detailsArea.appendText("hiiiiiiiiiiiiiiiii");
+            detailsArea.appendText(("\nThe shortest route from " + locationStartCb.getValue() + " to " + locationDestCb.getValue() + "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"));
+            System.out.println();
+        System.out.println("hiiii");
+            DistancedRoute cpa = findShortestRouteDijkstra(nodeList.get(locationStartCb.getSelectionModel().getSelectedIndex()), locationDestCb.getValue());
+        System.out.println((locationStartCb.getSelectionModel().getSelectedIndex()));
         System.out.println(locationDestCb.getValue());
-        //String convertedToString = String.valueOf(locationStartCb.getVisibleRowCount());
-    }
+            int i = 0;
 
-    public void addLocationLink() {
-
-
-        try {
-            for (int i = 0; i < 1; i++) {
-                System.out.println("Enter First Location Link(int)");
-                int firstLocation = (scanner.nextInt());
-                System.out.println("Enter Second Location Link(int)");
-                int secondLocation = (scanner.nextInt());
-                System.out.println("Enter the road name between the two locations");
-                String road = (scanner.nextLine());
-                scanner.nextLine();
-                System.out.println("Enter the distance between the two links");
-                int distance = (scanner.nextInt());
-
-                nodeList.get(firstLocation).connectToNodeUndirected(nodeList.get(secondLocation), road, distance);
+            for (GraphNodeAL2<?> n : cpa.routeList) {
+                detailsArea.appendText(i + ": " + n.data + "\n");
             }
-        } catch (Exception e) {
-            System.out.println("Error: Make sure to enter whole numbers only and that the location index exists");
-        }
-        try {
-            System.out.println("Dijkstra's algorithm:");
-            System.out.println("-------------------------------------");
-            System.out.println("Enter the source Location Link(INT INDEX)");
-            int sourceLocation = (scanner.nextInt());
-            System.out.println("Enter the destination(STRING)");
-            String dest = (scanner.nextLine());
+            detailsArea.appendText("\nThe total route distance is: " + cpa.routeDistance + "km");
 
-            System.out.println("The shortest path from New Ross to Kilmuckridge");
-            System.out.println("using Dijkstra's algorithm:");
-            System.out.println("-------------------------------------");
-            DistancedPath cpa = findShortestPathDijkstra(nodeList.get(sourceLocation), locationDestCb.getValue());
-            for (GraphNodeAL2<?> n : cpa.pathList)
-                System.out.println(n.data);
-            System.out.println("\nThe total path distance is: " + cpa.pathDistance + "km");
+
+    }
+
+    public void allRoutes() {
+        try {
+            detailsArea.setText("\nAll shortest routes from " + locationStartCb.getValue() + " to other locations"+"\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            traverseGraphDepthFirstShowingTotalDistance((nodeList.get(locationStartCb.getSelectionModel().getSelectedIndex())), null, 0);
         } catch (Exception e) {
-            System.out.println("Error: Please make sure only whole numbers were entered and that the location index exits.");
+            detailsArea.setText("Please enter a start and end location.");
+
         }
     }
+
+    public void multibleRoutes() {
+        try {
+            System.out.println("All solution paths from Coconut (object f)");
+            System.out.println("to node containing Plum");
+            System.out.println("------------------------------------------");
+            List<List<GraphNodeAL2<?>>> allPaths=findAllPathsDepthFirst((nodeList.get(locationStartCb.getSelectionModel().getSelectedIndex())),null,locationDestCb.getValue());
+            int pCount=1;
+            for(List<GraphNodeAL2<?>> p : allPaths) {
+                System.out.println("\nPath "+(pCount++)+"\n--------");
+                for(GraphNodeAL2<?> n : p)
+                    System.out.println(n.data);
+            }
+            System.out.println("testmeeeeeee");
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            detailsArea.setText("Please enter a start and end location.");
+        }
+    }
+
 
     int test = 0;
 
-    public void loadMap() throws IOException {
+    public void loadMap () throws IOException {
 
+        String mapdata = "src/application/mapdata.csv";
         File mapfile = new File(mapdata);
         System.out.println("\n");
         System.out.println("CSV MAP DATA");
         System.out.println("--------------------------------");
 
         //use scanner to read file
-        mapread = new Scanner(mapfile);
+        Scanner mapread = new Scanner(mapfile);
         //while there is still next item in the file
         String line;
 
@@ -314,8 +248,9 @@ public class GraphNodeAL2<T> {
             //list.add(new GraphNodeAL2(name, road, distance));
         }
 
+        String linkdata = "src/application/links.csv";
         File linkfile = new File(linkdata);
-        linkread = new Scanner(linkfile);
+        Scanner linkread = new Scanner(linkfile);
 
         while (linkread.hasNext()) {
             String data = linkread.next();
@@ -328,64 +263,25 @@ public class GraphNodeAL2<T> {
                 int secondLocation = Integer.parseInt(parts[1]);
                 String road = parts[2];
                 int distance = Integer.parseInt(parts[3]);
-                System.out.println(firstLocation);
  /*               GraphNodeAL2<String> test = new GraphNodeAL2<>(parts[i]);
                 nodeLis.add(test);*/
                 nodeList.get(firstLocation).connectToNodeUndirected(nodeList.get(secondLocation), road, distance);
             }
-            //list.add(new GraphNodeAL2(name, road, distance));
         }
-
-
-        // String test = "hey";
-        //locationStartCb.getItems().clear();
+        locationStartCb.getItems().clear();
+        locationDestCb.getItems().clear();
         System.out.println();
         System.out.println("Map data loaded...");
         mapread.close();
 
         for (int i = 0; i < nodeList.size(); i++) {
-            System.out.println(nodeList.get(i).data);
             locationStartCb.getItems().add(nodeList.get(i).data);
             locationDestCb.getItems().add(nodeList.get(i).data);
         }
-
-
-        //setData();
-    }
-  
-    /* public void readIn() throws IOException {
-
-        BufferedReader br = null;
-
-        br = new BufferedReader(new FileReader(new File("src/application/.csv")));
-        String line;
-        while ((line = br.readLine()) != null) {
-            String[] entries = line.split(",");
-            for (int i = 0; i < entries.length; i++) {
-                GraphNodeAL<String> test = new GraphNodeAL<>(entries[i]);
-                test.ID = id;
-                id++;
-                list.add(test);
-
-            }
-        }
-        
-
-        br = new BufferedReader(new FileReader(new File("src/files/links.csv")));
-
-        while ((line = br.readLine()) != null) {
-
-            String[] entries = line.split(",");
-            int src = parseInt(entries[0]);
-            int dest = parseInt(entries[1]);
-            int dist = parseInt(entries[2]);
-            list.get(src).connectToNodeUndirected(list.get(dest), dist);
-        }
-
     }
 
-    public void exitMenu(ActionEvent event) {
+    public void exitMenu () {
         System.exit(0);
-    }*/
+    }
 
 }

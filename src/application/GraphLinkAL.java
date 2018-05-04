@@ -1,5 +1,5 @@
 package application;
-public class GraphLinkAL {
+public class GraphLinkAL extends GraphNodeAL2<Object> {
 	public GraphNodeAL2<?> destNode; // Could also store source node if required
 	public String road;
 	public int distance; // Other link attributes could be similarly stored
